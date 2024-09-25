@@ -13,7 +13,6 @@ Before you begin, ensure you have the following:
 
 ## Setup Instructions
 
-## Connect to EC2 and Upload Model
 
 ### Step 1: Connect to the EC2 Instance with PuTTY
 
