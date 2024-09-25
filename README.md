@@ -29,6 +29,7 @@ To access your AWS EC2 instance, follow these steps:
    - In the **Host Name (or IP address)** field, enter `ec2-user@<your-ec2-public-ip>`.
    - In **Category > Connection > SSH > Auth**, browse for your `.ppk` file under **Private key file for authentication**.
    - Click **Open** to start the SSH session.
+   - user name is `ec2-user` or `ubuntu`
 
 ### Step 2: Upload the Model to EC2 with WinSCP
 
@@ -36,12 +37,12 @@ To access your AWS EC2 instance, follow these steps:
 2. **Connect to EC2**:
    - Open **WinSCP**.
    - In the **Host Name** field, enter the EC2 instance's public IP address.
-   - Set the **Username** to `ec2-user`.
+   - Set the **Username** to `ec2-user` or `ubuntu`.
    - Select your **Private Key File** (the `.ppk` file generated earlier).
    - Click **Login** to connect.
 3. **Upload the Model**: 
    - Once connected, navigate to the desired directory on the EC2 instance.
-   - Upload your model file (e.g., `model.pt`) from your local machine to the instance by dragging and dropping it into the remote directory.
+   - Upload your model file from your local machine to the instance by dragging and dropping it into the remote directory.
 
 
 
