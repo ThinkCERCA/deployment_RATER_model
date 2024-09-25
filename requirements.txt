@@ -1,0 +1,5 @@
+torchvision
+pytorch_lightning
+flask
+flask-cors
+transformers
