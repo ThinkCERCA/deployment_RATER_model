@@ -13,7 +13,39 @@ Before you begin, ensure you have the following:
 
 ## Setup Instructions
 
-### Step 1: Install NVIDIA Drivers
+## Connect to EC2 and Upload Model
+
+### Step 1: Connect to the EC2 Instance with PuTTY
+
+To access your AWS EC2 instance, follow these steps:
+
+1. **Download PuTTY**: Download and install [PuTTY](https://www.putty.org/), an SSH client.
+2. **Convert your PEM key to PPK**: Use PuTTYgen to convert your AWS PEM file to a PPK format.
+   - Open **PuTTYgen**.
+   - Click **Load** and choose your `.pem` file.
+   - Click **Save private key** to save a `.ppk` file.
+3. **Connect to EC2**:
+   - Open **PuTTY**.
+   - In the **Host Name (or IP address)** field, enter `ec2-user@<your-ec2-public-ip>`.
+   - In **Category > Connection > SSH > Auth**, browse for your `.ppk` file under **Private key file for authentication**.
+   - Click **Open** to start the SSH session.
+
+### Step 2: Upload the Model to EC2 with WinSCP
+
+1. **Download WinSCP**: Install [WinSCP](https://winscp.net/eng/index.php), a file transfer tool.
+2. **Connect to EC2**:
+   - Open **WinSCP**.
+   - In the **Host Name** field, enter the EC2 instance's public IP address.
+   - Set the **Username** to `ec2-user`.
+   - Select your **Private Key File** (the `.ppk` file generated earlier).
+   - Click **Login** to connect.
+3. **Upload the Model**: 
+   - Once connected, navigate to the desired directory on the EC2 instance.
+   - Upload your model file (e.g., `model.pt`) from your local machine to the instance by dragging and dropping it into the remote directory.
+
+
+
+### Step 3: Install NVIDIA Drivers
 
 Run the following commands to install the NVIDIA drivers and the necessary container toolkit:
 
@@ -22,7 +54,7 @@ sudo ubuntu-drivers autoinstall
 sudo apt install nvidia-cuda-toolkit -y
 ```
 
-### Step 2: Install NVIDIA Container Toolkit
+### Step 4: Install NVIDIA Container Toolkit
 
 Add the NVIDIA Container Toolkit repository and install the toolkit using these commands:
 
@@ -34,7 +66,7 @@ sudo apt-get install -y nvidia-container-toolkit
 sudo reboot
 ```
 
-### Step 3: Pull the PyTorch Docker Image
+### Step 5: Pull the PyTorch Docker Image
 
 After the instance reboots, pull the PyTorch Docker image with CUDA support:
 
@@ -42,7 +74,7 @@ After the instance reboots, pull the PyTorch Docker image with CUDA support:
 docker pull pytorch/pytorch:2.4.1-cuda12.4-cudnn9-runtime
 ```
 
-### Step 4: Run the Docker Container
+### Step 6: Run the Docker Container
 
 To run the PyTorch container with GPU support and map port 8080 for the API:
 
@@ -52,7 +84,42 @@ sudo docker run --gpus all -it --rm -v $PWD:/workspace -p 8080:8080 pytorch/pyto
 
 This command launches the Docker container with access to all GPUs, and maps your local directory to `/workspace` in the container.
 
-### Step 5: Run the Model API
+### Step 7: Copy the Model from EC2 to the Docker Container
+
+After uploading the model to the EC2 instance, you can copy it into your running Docker container:
+
+1. **Find the Container ID**:
+   Run the following command to find your container's ID:
+
+   ```bash
+   docker ps
+   ```
+
+2. **Copy the Model into the Container**:
+   Use the `docker cp` command to copy your model file from the EC2 instance to the container:
+
+   ```bash
+   docker cp /path/to/model.pt <container_id>:/workspace
+   ```
+
+   Replace `<container_id>` with your actual container ID and adjust `/workspace` as per your container setup.
+
+3. **Verify the Model in the Container**:
+   To check if the file has been successfully copied, open a bash session inside the container:
+
+   ```bash
+   docker exec -it <container_id> bash
+   ```
+
+   Then list the files in the `/workspace` directory to confirm the presence of your model:
+
+   ```bash
+   ls /workspace
+   ```
+
+Now, your model is ready for use in the container.
+
+### Step 8: Run the Model API
 
 Inside the container, run your model script:
 
@@ -66,7 +133,7 @@ You can check that the Python process is running:
 ps aux | grep python
 ```
 
-### Step 6: Test the API
+### Step 9: Test the API
 
 Once the model is running in the container, you can test it using `curl` or Postman. For example, send a POST request with a JSON payload:
 
