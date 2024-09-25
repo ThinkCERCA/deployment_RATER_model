@@ -1,5 +1,5 @@
 
-# PyTorch Model Deployment on AWS using Docker
+# PyTorch GPU Model Deployment on AWS using Docker
 
 This project demonstrates how to deploy a PyTorch model on AWS using Docker with GPU acceleration. The model is deployed in a Docker container with PyTorch and CUDA support for GPU-based computation.
 
